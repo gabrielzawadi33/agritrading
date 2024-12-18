@@ -3,7 +3,7 @@ import 'package:agritrade/themes/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../widgets/custom_textInput.dart';
+import '../widgets/custom_text_Input.dart';
 
 class CrateForm extends StatelessWidget {
   CrateForm({super.key});
@@ -47,26 +47,32 @@ class CrateForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Crate Form'),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
       backgroundColor: backgroundColor,
       body: SafeArea(
           child: Center(
         child: Column(
           children: [
-            const SizedBox(height: 200),
-            const Text('Register Crate', style: TextStyle(fontSize: 20)),
             const SizedBox(height: 20),
             CustomTextInputField(
-              prefixIcon: CupertinoIcons.cube_box,
               controller: crateNameController,
               keyboardType: TextInputType.text,
-              placeholder: 'Name of Crate',
+              placeholder: 'Name ',
             ),
             const SizedBox(height: 20),
             CustomTextInputField(
-              prefixIcon: CupertinoIcons.number,
               controller: noOfcrateController,
               keyboardType: TextInputType.text,
-              placeholder: 'Crate Quantity',
+              placeholder: ' Quantity',
             ),
             const SizedBox(height: 20),
             ElevatedButton(
@@ -80,10 +86,10 @@ class CrateForm extends StatelessWidget {
                 }
               },
               style: ElevatedButton.styleFrom(
-                primary: Colors.brown.withOpacity(0.8),
-                onPrimary: Colors.brown,
+                primary: backgroundColor,
               ),
-              child: const Text('Submit', style: TextStyle(fontSize: 12, color: Colors.black)),
+              child: const Text('Save',
+                  style: TextStyle(fontSize: 12, color: Colors.black)),
             ),
           ],
         ),

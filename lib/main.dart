@@ -1,5 +1,6 @@
+import 'package:agritrade/model/requisition.dart';
 import 'package:agritrade/pages/crate_form.dart';
-import 'package:agritrade/pages/register.dart';
+import 'package:agritrade/pages/requisition_form.dart';
 import 'package:agritrade/pages/vehicle_form.dart';
 import 'package:agritrade/themes/colors.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
-      home:   VehicleForm(),
+      home:  RequisitionForm(),
     );
   }
 }

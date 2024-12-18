@@ -1,15 +1,15 @@
-import 'package:agritrade/pages/register.dart';
+import 'package:agritrade/pages/requisition_form.dart';
 import 'package:agritrade/themes/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../widgets/custom_textInput.dart';
+import '../widgets/custom_text_Input.dart';
 
 class VehicleForm extends StatelessWidget {
   VehicleForm({super.key});
   final TextEditingController vehicleNameController = TextEditingController();
   final TextEditingController plateNoController = TextEditingController();
-  
+
   bool validate(BuildContext context) {
     if (plateNoController.text.isEmpty) {
       showError(context, 'Please provide Number of Crates');
@@ -46,55 +46,56 @@ class VehicleForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        backgroundColor: backgroundColor, 
-        body: SingleChildScrollView(
-          child: SafeArea(
-              child: Center(
-            child: Column(
-              children: [
-                const SizedBox(height: 250),
-                const Text(
-                  'Register Vehicle',
-                  style: TextStyle(fontSize: 20),
-                ),
-                const SizedBox(height: 20),
-                CustomTextInputField(
-                  prefixIcon: CupertinoIcons.car_fill,
-                  controller: plateNoController,
-                  keyboardType: TextInputType.text,
-                  placeholder: 'Name of Vehicle',
-                ),
-                const SizedBox(height: 20),
-                CustomTextInputField(
-                  prefixIcon: CupertinoIcons.capsule_fill,
-                  controller: vehicleNameController,
-                  keyboardType: TextInputType.text,
-                  placeholder: 'Plate Number',
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    if (validate(context)) {
-                      // Navigate to another page
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const Register()),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.brown.withOpacity(0.8),
-                    onPrimary: Colors.brown,
-                  ),
-                  child: const Text('Submit',
-                      style: TextStyle(fontSize: 12, color: Colors.black)),
-                ),
-              ],
-            ),
-          )),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Vehicle Form'),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
-      
+      ),
+      backgroundColor: backgroundColor,
+      body: SafeArea(
+
+          child: Center(
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            CustomTextInputField(
+              controller: plateNoController,
+              keyboardType: TextInputType.text,
+              placeholder: 'Name',
+            ),
+            const SizedBox(height: 20),
+            CustomTextInputField(
+              controller: vehicleNameController,
+              keyboardType: TextInputType.text,
+              placeholder: 'Plate Number',
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                if (validate(context)) {
+                  // Navigate to another page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const RequisitionForm()),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                primary: Colors.brown.withOpacity(0.8),
+                onPrimary: Colors.brown,
+              ),
+              child: const Text('Save',
+                  style: TextStyle(fontSize: 12, color: Colors.black)),
+            ),
+          ],
+        ),
+      )),
     );
   }
 }
