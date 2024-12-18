@@ -1,3 +1,4 @@
+import 'package:agritrade/pages/crate_form.dart';
 import 'package:agritrade/themes/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,14 +8,14 @@ import '../model/supervisor.dart';
 import '../widgets/custom_textInput.dart';
 
 class Register extends StatefulWidget {
-  Register({super.key});
+  const Register({super.key});
 
   @override
   State<Register> createState() => _RegisterState();
 }
 
 class _RegisterState extends State<Register> {
-  bool isAddSupervisor = false;
+  bool isAddSupervisor = true;
   bool isAddQc = false;
   List<Supervisor> supervisors = [];
   List<Qc> qcs = [];
@@ -38,6 +39,60 @@ class _RegisterState extends State<Register> {
 
   final TextEditingController totalCostController = TextEditingController();
 
+  bool validate() {
+    if (locatioController.text.isEmpty) {
+      showError('Please provide location');
+      return false;
+    }
+
+    if (noOfcrateController.text.isEmpty) {
+      showError('Please provide number of crates');
+      return false;
+    }
+
+    if (noOfLabourController.text.isEmpty) {
+      showError('Please provide number of labour');
+      return false;
+    }
+
+    if (supervisors.isEmpty) {
+      showError('Please provide supervisor');
+      return false;
+    }
+    if (qcs.isEmpty) {
+      showError('Please provide qc');
+      return false;
+    }
+
+    return true;
+  }
+
+  // void clearFields() {
+  //   emailController.clear();
+  //   passwordController.clear();
+  // }
+
+  void showError(String message) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: const Text(''),
+          content: Text(message),
+          actions: [
+            CupertinoDialogAction(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -51,7 +106,16 @@ class _RegisterState extends State<Register> {
             child: Center(
               child: Column(
                 children: <Widget>[
-                  const SizedBox(height: 90),
+                  const SizedBox(height: 50),
+                  const Text(
+                    'Register Harvest',
+                    style: TextStyle(
+                      color: Colors.brown,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                   CustomTextInputField(
                     prefixIcon: CupertinoIcons.location_solid,
                     controller: locatioController,
@@ -69,14 +133,14 @@ class _RegisterState extends State<Register> {
                       CustomTextInputField(
                         prefixIcon: CupertinoIcons.cube_box,
                         controller: noOfcrateController,
-                        keyboardType: TextInputType.text,
+                        keyboardType: TextInputType.number,
                         placeholder: 'Number of  Crates',
                         width: MediaQuery.of(context).size.width / 2.5,
                       ),
                       CustomTextInputField(
                         prefixIcon: CupertinoIcons.number_circle_fill,
                         controller: noOfLabourController,
-                        keyboardType: TextInputType.text,
+                        keyboardType: TextInputType.number,
                         placeholder: 'Number of Labour',
                         width: MediaQuery.of(context).size.width / 2.5,
                       ),
@@ -89,33 +153,63 @@ class _RegisterState extends State<Register> {
                     color: Colors.brown,
                     thickness: 2,
                   ),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   GestureDetector(
                     onTap: () {
                       setState(() {
                         isAddSupervisor = true;
                       });
                     },
-                    child: const SizedBox(
+                    child: SizedBox(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
-                            CupertinoIcons.person_add,
+                          const Icon(
+                            CupertinoIcons.add_circled_solid,
                             size: 20,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
-                          Text(
-                            'Supervisor ',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                          if (!isAddSupervisor) ...[
+                            const Text(
+                              'Tap to Add Supervisor',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
+                          ] else ...[
+                            const Text(
+                              ' Add Supervisor ',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 30,
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  isAddSupervisor = false;
+                                });
+                              },
+                              icon: const Icon(
+                                Icons.cancel_outlined,
+                                color: Colors.black,
+                              ),
+                            )
+                          ],
                         ],
                       ),
                     ),
+                  ),
+                  const SizedBox(
+                    height: 10,
                   ),
                   // showing the added suprevisor
                   if (supervisors.isNotEmpty) ...[
@@ -130,7 +224,9 @@ class _RegisterState extends State<Register> {
                       }).toList(),
                     ),
                   ],
-
+                  const SizedBox(
+                    height: 10,
+                  ),
                   if (isAddSupervisor) ...[
                     CustomTextInputField(
                       prefixIcon: CupertinoIcons.person,
@@ -153,16 +249,24 @@ class _RegisterState extends State<Register> {
                     CupertinoButton(
                       color: CupertinoColors.systemBrown.withOpacity(0.4),
                       onPressed: () {
-                        final supervisor = Supervisor(
-                          name: supervisorNameController.text,
-                          phone: supervisorPhoneController.text,
-                        );
-                        setState(() {
-                          supervisors.add(supervisor);
-                          supervisorNameController.clear();
-                          supervisorPhoneController.clear();
-                          isAddSupervisor = false;
-                        });
+                        if (supervisorNameController.text.isEmpty) {
+                          showError('Please provide supervisor name');
+                          return;
+                        } else if (supervisorPhoneController.text.isEmpty) {
+                          showError('Please provide supervisor phone');
+                          return;
+                        } else {
+                          final supervisor = Supervisor(
+                            name: supervisorNameController.text,
+                            phone: supervisorPhoneController.text,
+                          );
+                          setState(() {
+                            supervisors.add(supervisor);
+                            supervisorNameController.clear();
+                            supervisorPhoneController.clear();
+                            isAddSupervisor = false;
+                          });
+                        }
                       },
                       child: const Text(
                         'Save',
@@ -180,34 +284,61 @@ class _RegisterState extends State<Register> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        CupertinoIcons.person_2_square_stack,
-                        size: 20,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      const Text(
-                        'QC ',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isAddQc = true;
+                      });
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          CupertinoIcons.add_circled_solid,
+                          size: 20,
                         ),
-                      ),
-                      IconButton(
-                          onPressed: () {
-                            setState(() {
-                              isAddQc = true;
-                            });
-                          },
-                          icon: const Icon(Icons.add)),
-                    ],
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        if (!isAddQc) ...[
+                          const Text(
+                            'Tap to Add sQC ',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ] else ...[
+                          const Text(
+                            'Add QC ',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 30,
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isAddQc = false;
+                              });
+                            },
+                            icon: const Icon(
+                              Icons.cancel_outlined,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
                   ),
                   // showing the added qcs
-                      if (qcs.isNotEmpty) ...[
+                  if (qcs.isNotEmpty) ...[
                     Wrap(
                       spacing: 2.0,
                       runSpacing: 2.0,
@@ -219,36 +350,49 @@ class _RegisterState extends State<Register> {
                       }).toList(),
                     ),
                   ],
+                  const SizedBox(
+                    height: 10,
+                  ),
                   if (isAddQc) ...[
                     CustomTextInputField(
                       prefixIcon: CupertinoIcons.person_alt_circle,
-                      controller: TextEditingController(),
+                      controller: qcNameoller,
                       keyboardType: TextInputType.text,
                       placeholder: 'Name of QC',
                     ),
                     const SizedBox(
                       height: 10,
                     ),
-                    
                     CustomTextInputField(
                       prefixIcon: CupertinoIcons.phone_fill,
-                      controller: TextEditingController(),
+                      controller: qcPhoneController,
                       keyboardType: TextInputType.text,
                       placeholder: 'Phone of the QC',
+                    ),
+                    const SizedBox(
+                      height: 10,
                     ),
                     CupertinoButton(
                       color: CupertinoColors.systemBrown.withOpacity(0.4),
                       onPressed: () {
-                        final qc = Qc(
-                          name: qcNameoller.text,
-                          phone: qcPhoneController.text,
-                        );
-                        setState(() {
-                          qcs.add(qc);
-                          qcNameoller.clear();
-                          qcPhoneController.clear();
-                          isAddQc = false;
-                        });
+                        if (qcNameoller.text.isEmpty) {
+                          showError('Please provide QC name');
+                          return;
+                        } else if (qcPhoneController.text.isEmpty) {
+                          showError('Please provide QC phone');
+                          return;
+                        } else {
+                          final qc = Qc(
+                            name: qcNameoller.text,
+                            phone: qcPhoneController.text,
+                          );
+                          setState(() {
+                            qcs.add(qc);
+                            qcNameoller.clear();
+                            qcPhoneController.clear();
+                            isAddQc = false;
+                          });
+                        }
                       },
                       child: const Text(
                         'Save',
@@ -259,15 +403,28 @@ class _RegisterState extends State<Register> {
                   const SizedBox(
                     height: 10,
                   ),
+                  const Divider(
+                    color: Colors.brown,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   CustomTextInputField(
                     prefixIcon: CupertinoIcons.money_dollar_circle,
-                    controller: TextEditingController(),
+                    controller: totalCostController,
                     keyboardType: TextInputType.text,
                     placeholder: 'Total Cost',
                   ),
                   const SizedBox(height: 50),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      if (validate()) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => CrateForm()),
+                        );
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       primary: Colors.brown.withOpacity(0.8),
                       onPrimary: Colors.brown,
@@ -276,7 +433,7 @@ class _RegisterState extends State<Register> {
                       'Register',
                       style: TextStyle(color: Colors.black),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

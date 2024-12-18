@@ -1,6 +1,7 @@
 import 'package:agritrade/pages/crate_form.dart';
 import 'package:agritrade/pages/register.dart';
 import 'package:agritrade/pages/vehicle_form.dart';
+import 'package:agritrade/themes/colors.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -14,10 +15,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home:  Register(),
+      home:   VehicleForm(),
     );
   }
 }
